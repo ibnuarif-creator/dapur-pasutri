@@ -19,11 +19,12 @@ images/uploads/*
 .DS_Store
 Thumbs.db
 
-# Working materials of this brand (brief, revisi, screenshot) — add below
-_bahan/
-desain/
-starter-kit/
-spefisikasi.txt
-Logo.png
-deck.pdf
-testimo.png
+# Working materials of this brand (brief, revisi, screenshot) — add below.
+# Leading "/" = root only: Windows git ignores case, so "Logo.png" would also hide images/logo.png.
+/_bahan/
+/desain/
+/starter-kit/
+/spefisikasi.txt
+/Logo.png
+/deck.pdf
+/testimo.png
