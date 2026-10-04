@@ -1,0 +1,29 @@
+# Portal runtime state — server-owned, never committed
+includes/credentials.json
+includes/ratelimit.json
+includes/*.backup.json
+includes/sessions/
+data/*.tmp-*
+data/.lock
+
+# Photos uploaded through the portal — server content, not code
+images/uploads/*
+!images/uploads/.htaccess
+!images/uploads/.gitkeep
+
+# Deploy packages
+*-deploy.zip
+*-update-*.zip
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Working materials of this brand (brief, revisi, screenshot) — add below
+_bahan/
+desain/
+starter-kit/
+spefisikasi.txt
+Logo.png
+deck.pdf
+testimo.png

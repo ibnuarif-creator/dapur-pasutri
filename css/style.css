@@ -1,0 +1,474 @@
+/* =====================================================================
+   style.css — tampilan publik Dapur Pasutri. Bagian 1 (token) WAJIB
+   dipakai; bagian 2–3 (reset & widget) dari starter kit; bagian 4 layout
+   khusus brand ini (pastel, terinspirasi foto kemasan Stick Kentang).
+   ===================================================================== */
+
+/* ---------- 1. TOKEN (ganti per brand) ---------- */
+:root {
+  /* Palet — nama berdasarkan PERAN, bukan nama warna.
+     Diambil dari foto kemasan (desain/PaletWarna.jpeg). */
+  --primary: #B8566A;        /* rose dari strip label kemasan: tombol, judul, harga */
+  --primary-dark: #95404F;   /* hover tombol utama */
+  --secondary: #4F8799;      /* biru langit tua: focus ring, eyebrow */
+  --accent: #CFE6D3;         /* mint pastel: kartu produk, aksen di latar gelap */
+  --surface-dark: #36402F;   /* hijau tua tulisan "Stick Kentang": footer, tombol gelap */
+  --surface-dark-2: #46523D;
+  --bg: #FFFAF3;             /* krem lantai foto */
+  --bg-alt: #FBEFE7;         /* blush muda: section produk */
+  --card: #FFFFFF;
+  --ink: #2F3329;
+  --ink-soft: rgba(47, 51, 41, .74);
+  --line: rgba(47, 51, 41, .12);
+  --on-dark: #FFFAF3;
+
+  /* Pastel dari foto kemasan (latar dekoratif) */
+  --pastel-blue: #B9DAE6;
+  --pastel-blue-soft: #E4F1F5;
+  --pastel-mint: #C9E3CF;
+  --pastel-pink: #F2D0C8;
+  --pastel-butter: #F6E8B4;
+  --potato: #E2C06E;         /* warna stick kentang */
+  --card-ink: #34402F;       /* teks di atas kartu mint/krem */
+
+  /* Warna resmi kanal pemesanan */
+  --wa: #25D366;
+  --shopee: #EE4D2D;
+  --gofood: #00AA13;
+  --instagram: #D62976;
+
+  /* Font — Google Fonts, dimuat di <head> index.html */
+  --font-display: "Bricolage Grotesque", "Arial Black", system-ui, sans-serif;
+  --font-body: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Bentuk */
+  --radius-lg: 28px;
+  --radius-md: 20px;
+  --radius-sm: 12px;
+  --shadow-sm: 0 4px 14px rgba(47, 51, 41, .08);
+  --shadow-md: 0 16px 36px rgba(47, 51, 41, .16);
+  --ease: cubic-bezier(.22, .9, .32, 1);
+  --header-h: 76px;
+}
+
+/* ---------- 2. RESET & DASAR ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+section[id], footer[id] { scroll-margin-top: var(--header-h); }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+img { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+h1, h2, h3, h4 { font-family: var(--font-display); line-height: 1.15; margin: 0 0 .5em; }
+p { margin: 0 0 1em; color: var(--ink-soft); }
+ul { list-style: none; margin: 0; padding: 0; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+[hidden] { display: none !important; }
+
+a:focus-visible, button:focus-visible { outline: 3px solid var(--secondary); outline-offset: 3px; }
+
+.wrap { width: 100%; max-width: 1140px; margin: 0 auto; padding: 0 24px; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+}
+
+/* ---------- 3. WIDGET (dipakai js/ui.js — ubah tampilannya boleh, class-nya jangan) ---------- */
+
+/* Reveal-on-scroll */
+[data-reveal] { opacity: 0; transform: translateY(24px); transition: opacity .7s var(--ease) var(--d, 0ms), transform .7s var(--ease) var(--d, 0ms); }
+[data-reveal="stagger"] { opacity: 1; transform: none; }
+[data-reveal="stagger"] > * { opacity: 0; transform: translateY(24px); transition: opacity .7s var(--ease) var(--d, 0ms), transform .7s var(--ease) var(--d, 0ms); }
+[data-reveal].is-visible, [data-reveal="stagger"].is-visible > * { opacity: 1; transform: none; }
+
+/* Slideshow: semua foto ditumpuk, yang .is-active terlihat.
+   width:100% WAJIB — anaknya absolute semua, tanpa ini lebarnya kolaps jadi 0 di mobile. */
+.slideshow { position: relative; width: 100%; aspect-ratio: 4 / 3; overflow: hidden; border-radius: var(--radius-lg); background: var(--surface-dark); }
+.slideshow > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .6s ease; }
+.slideshow > img.is-active { opacity: 1; }
+.slideshow-dots { position: absolute; left: 0; right: 0; bottom: 14px; display: flex; justify-content: center; gap: 8px; z-index: 1; }
+.slideshow-dots button { width: 10px; height: 10px; border-radius: 999px; background: rgba(255, 255, 255, .55); transition: width .3s ease, background .3s ease; }
+.slideshow-dots button.is-active { width: 26px; background: #fff; }
+
+/* Carousel: track harus flex + overflow-x, lebar item diatur --visible */
+.carousel { --visible: 3; position: relative; }
+.carousel-track { display: flex; gap: 20px; overflow-x: auto; scrollbar-width: none; padding: 4px; }
+.carousel-track::-webkit-scrollbar { display: none; }
+.carousel-track > * { flex: 0 0 calc((100% - (var(--visible) - 1) * 20px) / var(--visible)); }
+.carousel-btn {
+  position: absolute; top: 50%; z-index: 2; transform: translateY(-50%);
+  width: 44px; height: 44px; border-radius: 999px; font-size: 1.6rem; line-height: 1;
+  background: var(--card); color: var(--primary); box-shadow: var(--shadow-md);
+}
+.carousel-btn--prev { left: -18px; }
+.carousel-btn--next { right: -18px; }
+
+/* Nav aktif dari scroll-spy */
+[data-nav] a.is-active { color: var(--primary); }
+
+/* ---------- 4. LAYOUT DAPUR PASUTRI ---------- */
+
+/* Tombol */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 12px 24px; border-radius: 999px; border: 2px solid transparent;
+  font-weight: 700; font-size: .95rem; white-space: nowrap; cursor: pointer;
+  transition: transform .15s ease, background .15s ease, box-shadow .15s ease, color .15s ease;
+}
+.btn:hover { transform: translateY(-2px); }
+.btn--primary { background: var(--primary); color: var(--on-dark); box-shadow: 0 6px 0 var(--primary-dark); }
+.btn--primary:hover { background: var(--primary-dark); }
+.btn--outline { border-color: var(--primary); color: var(--primary); background: var(--card); }
+.btn--outline:hover { background: var(--primary); color: var(--on-dark); }
+.btn--dark { background: var(--surface-dark); color: var(--on-dark); }
+.btn--dark:hover { background: var(--surface-dark-2); }
+.btn--lg { padding: 15px 30px; font-size: 1rem; }
+.btn-icon { width: 18px; height: 18px; fill: currentColor; }
+
+.eyebrow { display: inline-block; margin-bottom: 12px; font-size: .8rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--secondary); }
+.eyebrow--pill { padding: 6px 14px; border-radius: 999px; background: var(--card); color: var(--primary); box-shadow: var(--shadow-sm); letter-spacing: .08em; }
+.text-accent { color: var(--primary); position: relative; white-space: nowrap; }
+.text-accent::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: .02em; height: .22em; z-index: -1;
+  border-radius: 999px; background: var(--potato); opacity: .75;
+}
+
+/* Brand (logo = ikon SVG + teks, supaya memakai font display) */
+.brand { display: inline-flex; align-items: center; gap: 10px; }
+.brand-mark { width: 56px; height: 56px; flex: none; border-radius: 50%; box-shadow: 0 0 0 2px var(--card), var(--shadow-sm); }
+.brand-name { font-family: var(--font-display); font-weight: 800; font-size: 1.05rem; line-height: 1; color: var(--primary); letter-spacing: -.01em; }
+.brand-name em { font-style: normal; color: var(--ink); }
+
+/* Header */
+.site-header { position: sticky; top: 0; z-index: 50; background: var(--bg); transition: box-shadow .2s ease; }
+.site-header.is-scrolled { box-shadow: var(--shadow-sm); }
+.header-inner { display: flex; align-items: center; gap: 28px; height: var(--header-h); }
+.main-nav { display: flex; gap: 26px; margin-left: auto; font-weight: 700; }
+.main-nav a { color: var(--ink-soft); transition: color .15s ease; }
+.main-nav a:hover { color: var(--ink); }
+.nav-toggle { display: none; flex-direction: column; gap: 5px; padding: 10px; margin-left: auto; }
+.nav-toggle span { width: 24px; height: 2px; background: var(--ink); border-radius: 2px; transition: transform .2s ease, opacity .2s ease; }
+.nav-toggle.is-open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-toggle.is-open span:nth-child(2) { opacity: 0; }
+.nav-toggle.is-open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* Hero — latar biru langit & mint seperti foto kemasan */
+.hero {
+  position: relative; overflow: hidden; isolation: isolate; padding: 56px 0 88px;
+  background: linear-gradient(100deg, var(--pastel-blue) 0 56%, var(--pastel-mint) 56% 100%);
+}
+.hero-bg { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+.hero-bg::before {
+  content: ""; position: absolute; left: -160px; bottom: -200px; width: 460px; height: 460px;
+  border-radius: 50%; background: var(--pastel-pink);
+}
+.hero-bg::after {
+  content: ""; position: absolute; right: -120px; top: -120px; width: 380px; height: 380px;
+  border-radius: 50%; background: var(--pastel-butter);
+}
+.deco-star {
+  position: absolute; width: 30px; aspect-ratio: 1; background: var(--card);
+  clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  animation: twinkle 3.2s ease-in-out infinite;
+}
+.deco-star--1 { left: 5%; top: 14%; }
+.deco-star--2 { left: 47%; top: 9%; width: 22px; background: var(--primary); animation-delay: 1s; }
+.deco-star--3 { right: 5%; bottom: 12%; width: 26px; animation-delay: 2s; }
+.deco-stick {
+  position: absolute; width: 12px; height: 110px; border-radius: 999px; background: var(--potato);
+  box-shadow: inset -3px 0 0 rgba(0, 0, 0, .1); animation: float 6s ease-in-out infinite;
+}
+.deco-stick--1 { left: 50%; bottom: 4%; transform: rotate(35deg); }
+.deco-stick--2 { right: 3%; top: 40%; height: 80px; transform: rotate(-25deg); animation-delay: 1.5s; }
+@keyframes twinkle { 50% { transform: scale(.8) rotate(12deg); opacity: .7; } }
+@keyframes float { 50% { translate: 0 -14px; } }
+
+.hero-inner { display: grid; grid-template-columns: 1.1fr .9fr; align-items: center; gap: 56px; }
+.hero-logo { width: 112px; height: 112px; margin-bottom: 18px; border-radius: 50%; box-shadow: var(--shadow-sm); }
+.hero h1 { font-size: clamp(2.3rem, 5.2vw, 3.8rem); font-weight: 800; letter-spacing: -.02em; color: var(--primary); position: relative; z-index: 0; }
+.hero .text-accent { color: var(--surface-dark); }
+.lede { font-size: 1.1rem; max-width: 520px; color: var(--card-ink); }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 28px; }
+
+.hero-media { position: relative; justify-self: center; width: 100%; max-width: 420px; }
+.hero-frame {
+  border-radius: 32px; overflow: hidden; border: 8px solid var(--card);
+  box-shadow: var(--shadow-md); transform: rotate(2.5deg); background: var(--card);
+}
+.hero-frame img { width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; }
+.hero-sticker {
+  position: absolute; left: -26px; bottom: 34px; display: grid; place-items: center;
+  width: 108px; height: 108px; border-radius: 50%; transform: rotate(-12deg);
+  background: var(--primary); color: var(--on-dark); box-shadow: var(--shadow-md);
+  font-family: var(--font-display); font-weight: 800; font-size: 1.05rem; line-height: 1.05; text-align: center;
+}
+
+/* Statistik (dipakai di Tentang) */
+.stats { display: flex; flex-wrap: wrap; gap: 14px; margin: 28px 0 0; }
+.stats > div { padding: 12px 18px; border-radius: var(--radius-sm); background: rgba(255, 255, 255, .65); }
+.stats dt { font-family: var(--font-display); font-size: 1.7rem; font-weight: 800; line-height: 1.1; color: var(--primary); }
+.stats dd { margin: 0; font-size: .82rem; font-weight: 500; max-width: 170px; color: var(--ink-soft); }
+
+/* Keunggulan — teks berjalan lurus horizontal */
+.ribbon { overflow: hidden; background: var(--primary); color: var(--on-dark); padding: 14px 0; }
+.ribbon-track { display: flex; width: max-content; animation: marquee 40s linear infinite; }
+.ribbon:hover .ribbon-track { animation-play-state: paused; }
+.ribbon-track li { font-family: var(--font-display); font-weight: 800; font-size: 1.15rem; text-transform: uppercase; letter-spacing: .04em; padding-left: 28px; white-space: nowrap; }
+.ribbon-track li::after { content: "•"; margin-left: 28px; color: var(--pastel-butter); }
+@keyframes marquee { to { transform: translateX(-50%); } }
+
+/* Legalitas — panah warna brand (referensi deck berwarna cokelat, diminta diganti) */
+.legal { max-width: 1320px; padding-top: 56px; padding-bottom: 64px; }
+.legal-title { margin-bottom: 24px; text-align: center; font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 800; color: var(--primary); }
+.legal-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+.legal-item {
+  display: flex; align-items: center; gap: 12px; min-height: 96px; padding: 12px 30px 12px 12px;
+  background: var(--surface-dark); color: var(--on-dark);
+  clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 50%, calc(100% - 22px) 100%, 0 100%);
+  border-radius: 16px 0 0 16px;
+}
+.legal-item:nth-child(even) { background: var(--primary); }
+.legal-badge {
+  display: grid; place-items: center; flex: none; width: 46px; height: 46px; border-radius: 50%;
+  background: var(--card); color: var(--primary); font-family: var(--font-display); font-weight: 800; font-size: .8rem; letter-spacing: -.01em;
+}
+.legal-item h3 { margin: 0 0 2px; font-size: .98rem; font-weight: 800; color: var(--accent); }
+.legal-item p { margin: 0; font-size: .8rem; line-height: 1.4; color: rgba(255, 250, 243, .85); }
+
+/* Section umum */
+.section { padding: 96px 0; }
+.section--pink { background: var(--bg-alt); }
+.section--sky { background: var(--pastel-blue-soft); }
+.section--rose { background: var(--pastel-pink); }
+.section-head { max-width: 680px; margin: 0 auto 48px; text-align: center; }
+.section-head h2 { font-size: clamp(1.9rem, 3.6vw, 2.7rem); font-weight: 800; letter-spacing: -.02em; color: var(--primary); }
+.section-head p { margin: 0; }
+.title-xl { font-size: clamp(2.6rem, 6vw, 4rem) !important; text-transform: uppercase; letter-spacing: .01em !important; }
+
+/* Produk — kartu mint pastel (pola kartu dari mockup klien) */
+.product-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 28px; }
+.product-card {
+  flex: 0 1 calc((100% - 56px) / 3); display: flex; flex-direction: column;
+  padding: 16px 16px 20px; border-radius: var(--radius-lg); background: var(--accent);
+  box-shadow: 0 10px 0 rgba(52, 64, 47, .14); transition: transform .2s ease;
+}
+.product-card:hover { transform: translateY(-6px); }
+.product-card__img { aspect-ratio: 5 / 4; border-radius: var(--radius-md); overflow: hidden; background: var(--card); }
+.product-card__img img { width: 100%; height: 100%; object-fit: cover; }
+.product-card__body { display: flex; flex-direction: column; align-items: center; flex: 1; padding: 16px 6px 0; text-align: center; }
+.product-card h3 { margin: 0 0 6px; font-size: 1.08rem; font-weight: 800; line-height: 1.15; text-transform: uppercase; color: var(--primary); }
+.product-card p { margin: 0 0 14px; font-size: .95rem; color: var(--card-ink); }
+.price { margin: auto 0 14px; padding: 4px 16px; border-radius: 999px; background: var(--card); font-family: var(--font-display); font-size: 1.15rem; font-weight: 800; color: var(--primary); }
+.price--ask { font-family: var(--font-body); font-size: .85rem; font-weight: 700; color: var(--card-ink); }
+.order-btns { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.order-btn {
+  display: grid; place-items: center; width: 46px; height: 46px; border-radius: 14px; overflow: hidden;
+  color: var(--on-dark); box-shadow: 0 3px 0 rgba(0, 0, 0, .14); transition: transform .15s ease;
+}
+.order-btn:hover { transform: translateY(-3px) scale(1.05); }
+.order-btn svg { width: 26px; height: 26px; fill: currentColor; }
+.order-btn img { width: 100%; height: 100%; object-fit: cover; }
+.order-btn--whatsapp { background: var(--wa); }
+.order-btn--shopee { background: var(--shopee); }
+.order-btn--gofood { background: var(--gofood); }
+.order-btn--smexpo { width: 96px; background: var(--surface-dark); }
+.order-btn--smexpo img { object-fit: contain; }
+.grid-message { flex: 1 1 100%; text-align: center; padding: 32px 0; }
+.grid-message a { color: var(--primary); font-weight: 700; text-decoration: underline; }
+
+.cta-box {
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;
+  margin-top: 64px; padding: 32px 36px; border-radius: var(--radius-lg); background: var(--pastel-butter);
+  border: 3px dashed rgba(47, 51, 41, .18);
+}
+.cta-box h3 { margin: 0 0 4px; font-size: 1.4rem; font-weight: 800; }
+.cta-box p { margin: 0; color: var(--ink-soft); }
+
+/* Tentang — section biru langit pastel */
+.about { display: grid; grid-template-columns: .85fr 1.15fr; align-items: center; gap: 64px; }
+.about-media { width: 100%; max-width: 440px; justify-self: center; }
+/* Portrait slideshow; .slideshow keeps width:100% from the widget block (see §10 panduan). */
+.about-media .slideshow {
+  aspect-ratio: 4 / 5; border-radius: var(--radius-lg); border: 8px solid var(--card);
+  background: var(--card); box-shadow: var(--shadow-md);
+}
+.about h2 { font-size: clamp(1.9rem, 3.6vw, 2.6rem); font-weight: 800; letter-spacing: -.02em; color: var(--primary); }
+.about-copy > p { text-align: justify; hyphens: auto; }
+
+/* Testimoni — carousel kartu ulasan persegi (referensi: testimo.png) */
+.section--testimoni { background: var(--primary); }
+.testimoni-title {
+  margin-bottom: 40px; text-align: center; text-transform: uppercase;
+  font-size: clamp(2rem, 5vw, 3.4rem); font-weight: 800; letter-spacing: .01em; color: var(--on-dark);
+}
+.review-carousel { padding: 0 8px; }
+.review-carousel .carousel-track { gap: 24px; padding: 6px 4px 14px; }
+.review-carousel .carousel-track > * { flex-basis: calc((100% - (var(--visible) - 1) * 24px) / var(--visible)); }
+
+.review-card {
+  position: relative; display: flex; flex-direction: column; aspect-ratio: 1 / 1; overflow: hidden;
+  padding: 22px 22px 0; background: var(--pastel-butter); box-shadow: var(--shadow-md);
+}
+/* Soft diagonal band, like the swoosh in the reference card background. */
+.review-card::before {
+  content: ""; position: absolute; inset: -30% -40% auto auto; width: 90%; aspect-ratio: 1;
+  border-radius: 50%; border: 34px solid rgba(255, 255, 255, .28); pointer-events: none;
+}
+.review-logo { position: absolute; top: 10px; right: 10px; width: 36px; height: 36px; border-radius: 50%; }
+.review-spark { position: absolute; color: var(--surface-dark); font-size: 1.1rem; line-height: 1; }
+.review-spark--a { top: 16px; left: 14px; }
+.review-spark--b { top: 70px; right: 22%; font-size: .85rem; }
+.review-heart { position: absolute; right: 12%; bottom: 58px; z-index: 2; color: var(--primary); font-size: 1.7rem; line-height: 1; transform: rotate(14deg); }
+
+.review-head { position: relative; display: flex; flex-direction: column; align-items: center; margin: 10px 30px 16px; text-align: center; }
+.review-title {
+  font-family: var(--font-display); font-weight: 800; font-size: clamp(1.1rem, 1.9vw, 1.4rem); line-height: 1;
+  text-transform: uppercase; color: var(--card); transform: rotate(-4deg);
+  -webkit-text-stroke: 1.5px var(--surface-dark); paint-order: stroke fill;
+  text-shadow: 3px 3px 0 var(--surface-dark);
+}
+.review-brand {
+  margin-top: 8px; padding: 4px 18px; border-radius: 999px; transform: rotate(-4deg);
+  background: var(--surface-dark); color: var(--pastel-butter);
+  font-weight: 700; font-size: .78rem; letter-spacing: .08em; text-transform: uppercase;
+}
+
+.review-bubble {
+  position: relative; z-index: 1; margin: auto 4px; padding: 14px 16px;
+  border-radius: 16px; background: var(--card); box-shadow: var(--shadow-sm);
+}
+.review-bubble::after { content: ""; position: absolute; width: 18px; height: 18px; background: var(--card); transform: rotate(45deg); }
+.review-card--tail-right .review-bubble::after { right: -8px; top: 40%; }
+.review-card--tail-left .review-bubble::after { left: -8px; top: 40%; }
+.review-card--tail-bottom .review-bubble::after { left: 50%; bottom: -8px; margin-left: -9px; }
+.review-user { display: flex; align-items: center; gap: 10px; }
+.review-user > div { flex: 1; min-width: 0; line-height: 1.25; }
+.review-user strong { display: block; font-size: .9rem; }
+.review-user small { font-size: .74rem; color: var(--ink-soft); }
+.review-avatar {
+  display: grid; place-items: center; flex: none; width: 34px; height: 34px; border-radius: 50%;
+  background: var(--pastel-blue); color: var(--surface-dark); font-weight: 800; font-size: .72rem;
+}
+.review-more { color: var(--ink-soft); font-weight: 800; }
+.review-meta { display: flex; align-items: center; gap: 8px; margin: 10px 0 6px; }
+.review-stars { color: var(--potato); letter-spacing: 1px; font-size: .9rem; }
+.review-meta small { font-size: .74rem; color: var(--ink-soft); }
+.review-bubble p { margin: 0; font-size: .88rem; line-height: 1.45; color: var(--ink); }
+
+.review-foot {
+  position: relative; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 12px;
+  margin: 16px -22px 0; padding: 7px 10px; background: var(--card);
+  font-size: .64rem; font-weight: 700; color: var(--ink-soft);
+}
+
+.carousel-dots { display: flex; justify-content: center; gap: 10px; margin-top: 18px; }
+.carousel-dots span { width: 9px; height: 9px; border-radius: 50%; background: rgba(255, 255, 255, .45); transition: background .2s ease, transform .2s ease; }
+.carousel-dots span.is-active { background: var(--card); transform: scale(1.2); }
+
+/* Footer */
+.site-footer { background: var(--surface-dark); color: var(--on-dark); padding-top: 60px; }
+.site-footer p { color: rgba(255, 250, 243, .7); }
+.footer-inner { display: grid; grid-template-columns: 1.6fr 1.3fr .8fr 1.1fr; gap: 40px; padding-bottom: 40px; }
+.footer-brand p { max-width: 360px; }
+.brand--footer { margin-bottom: 16px; }
+.brand-logo--footer { width: 96px; height: 96px; border-radius: 50%; }
+.footer-quote { margin: 0; font-family: var(--font-display); font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--pastel-butter) !important; }
+.footer-col { display: flex; flex-direction: column; gap: 8px; }
+.footer-col h4 { margin-bottom: 6px; color: var(--on-dark); font-size: .8rem; letter-spacing: .14em; text-transform: uppercase; }
+.footer-col p { margin: 0; line-height: 1.7; }
+.footer-col a { color: rgba(255, 250, 243, .75); }
+.footer-col a:hover { color: var(--on-dark); }
+/* Peta lokasi di footer (pola contact-map dari starter kit) */
+.footer-map { position: relative; margin-bottom: 40px; }
+.footer-map iframe {
+  display: block; width: 100%; height: 320px; border: 0; border-radius: var(--radius-lg);
+  box-shadow: 0 0 0 6px rgba(255, 255, 255, .08);
+}
+.footer-map__card {
+  position: absolute; right: 48px; top: 24px; display: flex; flex-direction: column; align-items: flex-start; gap: 4px;
+  max-width: 320px; padding: 18px 20px; border-radius: var(--radius-md); background: var(--card); color: var(--ink); box-shadow: var(--shadow-md);
+}
+.footer-map__card strong { font-family: var(--font-display); font-size: 1.15rem; font-weight: 800; color: var(--primary); }
+.footer-map__card span { margin-bottom: 10px; font-size: .88rem; line-height: 1.45; color: var(--ink-soft); }
+.footer-map__card .btn { padding: 9px 18px; font-size: .85rem; }
+.footer-bottom { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding-top: 20px; padding-bottom: 24px; border-top: 1px solid rgba(255, 255, 255, .12); font-size: .85rem; }
+.footer-bottom p { margin: 0; }
+.footer-bottom a { color: var(--on-dark); font-weight: 700; }
+.portal-link { font-size: .78rem; opacity: .45; }
+.portal-link:hover { opacity: .9; }
+
+/* Tombol WA melayang */
+.wa-float {
+  position: fixed; right: 20px; bottom: 20px; z-index: 60;
+  display: grid; place-items: center; width: 58px; height: 58px; border-radius: 999px;
+  background: var(--wa); color: var(--card); box-shadow: 0 10px 24px rgba(0, 0, 0, .25);
+  transition: transform .2s ease;
+}
+.wa-float:hover { transform: scale(1.08); }
+.wa-float svg { width: 30px; height: 30px; fill: currentColor; }
+
+/* ---------- Responsif ---------- */
+@media (max-width: 1100px) {
+  .legal-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 980px) {
+  .hero-inner, .about { grid-template-columns: 1fr; }
+  .hero-copy { text-align: center; }
+  .hero-logo { margin-left: auto; margin-right: auto; }
+  .lede { margin-left: auto; margin-right: auto; }
+  .hero-actions { justify-content: center; }
+  .hero-media { max-width: 360px; }
+  .header-cta { display: none; }
+  .main-nav { gap: 22px; }
+  .product-card { flex-basis: calc((100% - 28px) / 2); }
+  .about-media { max-width: 360px; }
+  .review-carousel { --visible: 2; }
+  .footer-inner { grid-template-columns: 1fr 1fr; }
+  .footer-brand { grid-column: 1 / -1; }
+}
+
+@media (max-width: 760px) {
+  :root { --header-h: 64px; }
+  .nav-toggle { display: flex; }
+  .main-nav {
+    position: absolute; top: var(--header-h); left: 0; right: 0;
+    flex-direction: column; gap: 0; padding: 8px 24px 16px;
+    background: var(--bg); box-shadow: var(--shadow-md);
+    display: none;
+  }
+  .main-nav.is-open { display: flex; }
+  .main-nav a { padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .brand-mark { width: 48px; height: 48px; }
+  .section { padding: 68px 0; }
+  .hero { padding: 32px 0 64px; }
+  .hero-logo { width: 92px; height: 92px; }
+  .hero-sticker { left: -6px; width: 88px; height: 88px; font-size: .9rem; }
+  .deco-stick--1, .deco-star--1 { display: none; }
+  .ribbon-track li { font-size: .95rem; padding-left: 18px; }
+  .ribbon-track li::after { margin-left: 18px; }
+  .legal-grid { grid-template-columns: 1fr 1fr; }
+  .cta-box { padding: 24px; }
+}
+
+@media (max-width: 600px) {
+  .product-card { flex-basis: 100%; max-width: 380px; }
+  .legal-grid { grid-template-columns: 1fr; }
+  .review-carousel { --visible: 1; padding: 0; }
+  /* Narrow screens: let the card grow with its text instead of clipping it to a square. */
+  .review-card { aspect-ratio: auto; min-height: 300px; }
+  .review-carousel .carousel-btn--prev { left: -14px; }
+  .review-carousel .carousel-btn--next { right: -14px; }
+  .footer-inner { grid-template-columns: 1fr; }
+  /* Card under the map on phones so it never covers the pin. */
+  .footer-map iframe { height: 240px; }
+  .footer-map__card { position: static; max-width: none; margin-top: 12px; }
+}
